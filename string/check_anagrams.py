@@ -4,7 +4,7 @@ wiki: https://en.wikipedia.org/wiki/Anagram
 
 from collections import defaultdict
 
-def check_anagrams(first_str: str, second_str: str):
+def check_anagrams(first_str: str, second_str: str) -> bool:
     """
     Two strings are anagrams if they are made up of the same letters but are
     arranged differently (ignoring the case).
