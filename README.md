@@ -1,2 +1,2 @@
-# Python-
+# Python
 Python libraries (self-learner python)
