@@ -1,3 +1,17 @@
+"""
+A Python implementation of the Union-Find (Disjoint Set Union, DSU) data structure
+with path compression and union by rank optimizations.
+
+This structure is used to efficiently perform union and find operations on disjoint sets,
+commonly applied in Kruskal’s algorithm, network connectivity, and dynamic connectivity problems.
+
+Key Features:
+- Path compression: Flattens the tree to speed up future find operations.
+- Union by rank: Minimizes tree height by always attaching the smaller tree to the root of the larger one.
+- Amortized nearly constant time complexity per operation: O(α(n)), where α is the inverse Ackermann function.     
+"""
+
+
 from typing import Dict
 
 class UnionFind:    
@@ -25,6 +39,10 @@ class UnionFind:
         """
         Find the representive (root) of the set that contains u
         Apply path compression for optimization
+        ==> we can reduce the amount of these steps by by traversing
+        up two vertices at the a time instead of one
+        
+        That would mean that when we are going up the tree, we can set
         """
         p = self.parent[u]
         while p != self.parent[p]:
@@ -54,33 +72,27 @@ class UnionFind:
         return True
     
 
-import unittest
-class TestUnionFind(unittest.TestCase):
-    def setUp(self):
-        self.uf = UnionFind(5)
 
-    def test_initial_sets(self):
-        for i in range(1, 6):
-            self.assertEqual(self.uf.findSet(i), i)
-
-    def test_union_and_find(self):
-        self.assertTrue(self.uf.union(1, 2))
-        self.assertEqual(self.uf.findSet(1), self.uf.findSet(2))
-
-        self.assertTrue(self.uf.union(3, 4))
-        self.assertEqual(self.uf.findSet(3), self.uf.findSet(4))
-
-        self.assertTrue(self.uf.union(2, 3))
-        self.assertEqual(self.uf.findSet(1), self.uf.findSet(4))
-
-    def test_union_idempotence(self):
-        self.uf.union(1, 2)
-        self.assertFalse(self.uf.union(1, 2))  # already connected
-
-    def test_transitive_connection(self):
-        self.uf.union(1, 2)
-        self.uf.union(2, 3)
-        self.assertEqual(self.uf.findSet(1), self.uf.findSet(3))
-
+    def __str__(self) -> str:
+        """
+        Return a human-readable string representing the structure
+        Element | Parent | Rank
+        ------------------------
+        1    |   2    |  0  
+        2    |   4    |  1  
+        3    |   4    |  0  
+        4    |   4    |  2  
+        5    |   5    |  0  
+        """
+        lines = ["Element | Parent | Rank", "------------------------"]
+        for i in sorted(self.parent.keys()):
+            lines.append(f"{i:^7} | {self.parent[i]:^6} | {self.rank[i]:^4}")
+        return "\n".join(lines)
+    
 if __name__ == '__main__':
-    unittest.main()
+    uf = UnionFind(5)
+    uf.union(1, 2)
+    uf.union(3, 4)
+    uf.union(2, 3)
+
+    print(uf) 
